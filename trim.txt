@@ -1,0 +1,62 @@
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+#define BUFFER_SIZE 1000
+char* trimprefix(char);
+int main()
+{
+	char str[20];
+	printf("\nEnter the string: ");
+	scanf("%s", str);
+	trimprefix(str);
+	/**int result=trimprefix(str);
+	if(result)
+		printf("succesfully opened..");
+		printf("\nword %s is searched in root file..", str); //trimmed prefix word**/
+	return 0;
+}
+char* trimprefix(char str[20])
+{
+	char str1[BUFFER_SIZE];
+	int wordexist = 0;
+	FILE* fp, * fp1;
+	int len;
+	int value, n;
+	fp = fopen("rootword.txt", "r"); //open root file
+	fp1 = fopen("prefix.txt", "r");   //open prefix file
+	while (fgets(str1, BUFFER_SIZE, fp))   //read file contents of root file
+	{
+		str1[strcspn(str1, "\n")] = 0;
+		value = strcmp(str1, str);//check root.txt with string
+		if (value == 0)
+		{
+			wordexist = 1;
+			printf("\nword exists....");
+		}
+		else {
+			while (fgets(str1, BUFFER_SIZE, fp1))  //read prefix file contents
+			{
+				str1[strcspn(str1, "\n")] = 0;
+				len = strlen(str1);
+				if (len > 0)
+				{
+					char* p = str;
+					int count = 1;
+					n = strncmp(p, str1, count);       //comparing string with prefix file
+					//printf("\n%d", n);
+					if (n == 0)
+					{
+						memmove(p, p + len, strlen(p + len) + 1);           //move memory block to p
+						count++;
+						break;
+					}
+				}
+			}
+		}
+	}
+	fclose(fp);
+	fclose(fp1);
+	if(wordexist==0)
+		printf("\nword not exists.........");
+	printf("\nAfter trimming....%s", str);
+}
