@@ -1,55 +1,80 @@
-#include<stdio.h>
-#include<string.h>
-void validate(char);
+#include <stdio.h>
+#include "addprefix.h"
+#include "suffix.h"
+
+void validate(char[]);
+
+
 int main()
 {
-	int i;
 	char word[10];
-	printf("enter a word");
-	gets(word);
-	for (i = 0; word[i] != '\0'; i++)
+	int i;
+	int flag = 0;
+	while (1)
 	{
-		if (!isalpha(word[i]))
+		printf("\n\n\n\t\t\t Enter a Word : ");
+		gets(word);
+		if (strlen(word) != 0 && strlen(word)<20)
 		{
-			printf("entered word is not valid");
-			exit();
+			
+			for (i = 0; word[i] != '\0'; i++)
+				//for (i = 0; (word[i] != '\0' || strlen(word) == 0); i++)
+			{
+				if (!isalpha(word[i]))
+					//if (strlen(word) == 0 || !isalpha(word[i]))
+				{
+					flag = 1;
+					printf("\n\t\t\tEntered Word is Not Valid !!!");
+					break;
+				}
+
+			}
+			printf("\n\t\t\t Your word is : %s ", word);
+			if (flag == 0)
+			{
+				strlwr(word);
+				validate(word);
+			}
+		}
+		else
+		{
+			printf("\n\t\t\t Invalid Input.....");
 		}
 	}
-	validate(word);
+	
 	return 0;
-
-
 }
+
+
 void validate(char word[])
 {
 	int wordExist = 0;
-	FILE* fp;
+	FILE *fp;
+	char *prefix;
+	int i;
 	char words_in_root[15];
 	char ch;
-	fp = fopen("C:\\Users\\DELL\\Desktop\\rootword.txt", "r"); 
-	
+	fp = fopen("C:\\Users\\tina\\Desktop\\Capgemini training material\\Project\\rootword.txt", "r");
+
 	while (fgets(words_in_root, sizeof(words_in_root), fp))
 	{
 		words_in_root[strcspn(words_in_root, "\n")] = 0;
-		int fp = strcmp(word, words_in_root);
+		int f = strcmp(word, words_in_root);
 		//c = strcmp(word, words_in_root);
-		if (fp == 0)
+		if (f == 0)
 		{
-			wordExist = 1; 
-			printf("word exist in rootword file");//call addprefix function
-			exit(0);
-
-
+			wordExist = 1;
+			//printf("\nexists word");
+			addprefix(word); //call addprefix function
+			//printf("%s", prefix[0]);
+			break;
 		}
+
 	}
-		//fclose(fp);
-		if (wordExist == 0)
-			//printf("word exist");
-		//else
-			printf("word not exist in root word file");
 
+	fclose(fp);
+	if (wordExist == 0)
+		printf("\n\t\t\tWord Not Exists in root file"); 
+	//call trimming function here.....
 
-		
-	
-	
 }
