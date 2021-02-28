@@ -1,55 +1,50 @@
 #include <stdio.h>
 #include "prefix.h"
 #include "suffix.h"
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+
 
 #define TRUE 1
 #define FALSE 0
-int i;
-char* s = NULL;
+int index;
+char* word = NULL;
 char* str;
 
-void  trim_suffix(char* s)
+void  trim_suffix(char* word)
 {
-	FILE* fp1;
 	char root[50];
-	str = (char*)malloc(sizeof(char*) * strlen(s));
-	str = return_str(s);
-	if (str == NULL) {
-		printf("Nothing returned");
-	}
-	else {
-		fp1 = fopen("C:\\Users\\Dharmik\\Downloads\\stemming\\rootword.txt", "r");
-		while (fgets(root, sizeof(root), fp1))
-		{
-			root[strcspn(root, "\n")] = 0;
-			if (strcmp(root, str) == 0)
-			{
-				printf("\n  Word After Removing Suffix is :  %s", str);
-			}
-		}
-	}
+	str = (char*)malloc(sizeof(char*) * strlen(word));
+	str = return_str(word);
+	if (strcmp(str, word) == 0)
+		printf("\n\t\t\t\t  Sorry!!! %s is not available in our Dictionary....",word);
+	else
+
+	printf("\n\t\t\t\t  Word After Removing Suffix is :  %s", str);
 
 }
 
-char* return_str(char* s)
+char* return_str(char* word)
 {
 	char* temp;
 	temp = (char*)malloc(sizeof(char*));
-	strcpy(temp, s);
-	step1_a_b(temp);
-	step_1_c(temp);
-	step_2(temp);
-	step_3(temp);
-	step_4(temp);
-	step_5(temp);
-	return s;
+	strcpy(temp, word);
+	if (step1_a_b(temp) != NULL)
+		return temp;
+	else if (step_1_c(temp) != NULL)
+		return temp;
+	else if (step_2(temp) != NULL)
+		return temp;
+	else if (step_3(temp) != NULL)
+		return temp;
+	else if (step_4(temp) != NULL)
+		return temp;
+	else
+		step_5(temp);
+	
+	return temp;
 }
-int cons(int i, char* str)
+int cons(int index, char* str)
 {
-	if (str[i] == 'a' || str[i] == 'e' || str[i] == 'i' || str[i] == 'o' || str[i] == 'u')
+	if (str[index] == 'a' || str[index] == 'e' || str[index] == 'i' || str[index] == 'o' || str[index] == 'u')
 	{
 		return FALSE;
 	}
@@ -61,11 +56,11 @@ int degree_m(char* str)
 	int count = 0;
 	int length;
 	length = strlen(str);
-	for (i = 0; i < length - 1; i++)
+	for (index = 0; index < length - 1; index++)
 	{
-		if (!cons(i, str))
+		if (!cons(index, str))
 		{
-			if (cons(i + 1, str) && length > 0)
+			if (cons(index + 1, str) && length > 0)
 			{
 				count++;
 			}
@@ -76,9 +71,9 @@ int degree_m(char* str)
 int vowel_stem(char* str)
 {
 	int flag = 0;
-	for (i = 0; str[i]; i++)
+	for (index = 0; str[index]; index++)
 	{
-		if (!cons(i, str))
+		if (!cons(index, str))
 		{
 			flag = 1;
 		}
@@ -118,39 +113,40 @@ int end_s(char* str, char ch)
 	return 0;
 }
 
-char* cleanup_1(char* sr)
+char* cleanup_1(char* string1ab)
 {
 	int length;
-	length = strlen(sr);
-	if (sr[length - 1] == 't' && sr[length - 2] == 'a')
+	length = strlen(string1ab);
+	if (string1ab[length - 1] == 't' && string1ab[length - 2] == 'a')
 	{
-		sr[length] = 'e';
-		sr[length + 1] = '\0';
+		string1ab[length] = 'e';
+		string1ab[length + 1] = '\0';
 
 	}
-	else if (sr[length - 1] == 'l' && sr[length - 2] == 'b')
+	else if (string1ab[length - 1] == 'l' && string1ab[length - 2] == 'b')
 	{
-		sr[length] = 'e';
-		sr[length + 1] = '\0';
+		string1ab[length] = 'e';
+		string1ab[length + 1] = '\0';
 
 	}
 
-	else if (!(end_s(sr, 'l') || end_s(sr, 's') || end_s(sr, 'z')) && double_cons(sr))
+	else if (!(end_s(string1ab, 'l') || end_s(string1ab, 's') || end_s(string1ab, 'z')) && double_cons(string1ab))
 	{
-		sr[length - 1] = '\0';
+		string1ab[length - 1] = '\0';
 
 	}
-	else if (degree_m(sr) == 1 && cons_vowel_cons(sr))
+	else if (degree_m(string1ab) == 1 && cons_vowel_cons(string1ab))
 	{
 
-		sr[length] = 'e';
-		sr[length + 1] = '\0';
+		string1ab[length] = 'e';
+		string1ab[length + 1] = '\0';
 	}
-	return sr;
+
+	return string1ab;
 }
 char* step1_a_b(char* temp)
 {
-	s = NULL;
+	word = NULL;
 	int length;
 	length = strlen(temp);
 	if (end_s(temp, 's'))
@@ -158,21 +154,19 @@ char* step1_a_b(char* temp)
 		if (temp[length - 2] == 'e' && temp[length - 3] == 'i')
 		{
 			temp[length - 2] = '\0';
-			s = temp;
+			word = temp;
 		}
 		else if (temp[length - 2] == 'e' && temp[length - 3] == 's' && temp[length - 4] == 's')
 		{
 			temp[length - 2] = '\0';
-			s = temp;
+			word = temp;
 		}
-		else if (temp[length - 2] == 's')
+		else if (temp[length - 2] == 's' && temp[length-3]!='e' && temp[length - 3] != 'n')
 		{
-			s = temp;
-		}
-		else {
 			temp[length - 1] = '\0';
-			s = temp;
+			word = temp;
 		}
+		
 	}
 	else if (temp[length - 1] == 'd' && temp[length - 2] == 'e' && temp[length - 3] == 'e')
 	{
@@ -183,7 +177,7 @@ char* step1_a_b(char* temp)
 			if (degree_m(eed) > 0) {
 				temp[length - 1] = '\0';
 			}
-			s = temp;
+			word = temp;
 		}
 	}
 	else if (temp[length - 1] == 'd' && temp[length - 2] == 'e')
@@ -195,8 +189,10 @@ char* step1_a_b(char* temp)
 
 			strcpy(ed, substring_return(ed, 2));
 
-			if (vowel_stem(ed)) {
-				s = cleanup_1(ed);
+			if (vowel_stem(ed)) 
+			{
+				word=cleanup_1(ed);
+				strcpy(temp, word);
 			}
 		}
 	}
@@ -204,35 +200,36 @@ char* step1_a_b(char* temp)
 	{
 		char ing[30];
 		strcpy(ing, temp);
-		if (strlen(ing) > 3) {
-
+		if (strlen(ing) > 3)
+		{
 			strcpy(ing, substring_return(ing, 3));
 
-			if (vowel_stem(ing)) {
-				s = cleanup_1(ing);
-			}
+			if (vowel_stem(ing))
+			{
+				word = cleanup_1(ing);
+				strcpy(temp, word);
+			}		
 		}
 
 	}
-	printf("\n\nIn step 1_a_b, final value of s is %s\n", s);
-
+	return word;
 }
 char* step_1_c(char* temp)
 {
-	s = NULL;
+	word = NULL;
 	int length;
 	length = strlen(temp);
 	if (vowel_stem(temp) && temp[length - 1] == 'y')
 	{
 		temp[length - 1] = 'i';
 		temp[length] = '\0';
-		s = temp;
+		word = temp;
 	}
-	printf("\nIn step 1_c, final value of s is %s\n", s);
-
+	
+	return word;
 }
 char* step_2(char* temp) {
-	s = NULL;
+	word = NULL;
 	int length;
 	length = strlen(temp);
 	char step2[30];
@@ -246,7 +243,7 @@ char* step_2(char* temp) {
 		{
 			temp[length - 5] = 'e';
 			temp[length - 4] = '\0';
-			s = temp;
+			word = temp;
 		}
 		if (temp[length - 1] == 'l' && temp[length - 2] == 'a' &&
 			temp[length - 3] == 'n' && temp[length - 4] == 'o' &&
@@ -256,7 +253,7 @@ char* step_2(char* temp) {
 			strcpy(step2, substring_return(step2, 2));
 			if (degree_m(step2) > 0) {
 				temp[length - 2] = '\0';
-				s = temp;
+				word = temp;
 			}
 		}
 		else if ((length > 7 && degree_m(step2) > 0) &&
@@ -266,7 +263,7 @@ char* step_2(char* temp) {
 		{
 			temp[length - 5] = 'e';
 			temp[length - 4] = '\0';
-			s = temp;
+			word = temp;
 		}
 
 		else if ((length > 6) && temp[length - 1] == 'i' &&
@@ -279,56 +276,55 @@ char* step_2(char* temp) {
 				temp[length - 5] = 'l';
 				temp[length - 4] = 'e';
 				temp[length - 3] = '\0';
-				s = temp;
+				word = temp;
 			}
-			/*else
-			s = temp;*/
+			
 		}
 	}
-
-	printf("\nIn step 2, final value of s is %s\n", s);
+	return word;
+	
 }
 char* step_3(char* temp) {
-	s = NULL;
+	word = NULL;
 	int length = strlen(temp);
 	char step3[30];
 	strcpy(step3, temp);
-	if (strlen(step3) > 5) {
-
-		strcpy(step3, substring_return(step3, 5));
-		if ((length > 3 && degree_m(step3) > 0) &&
-			(temp[length - 1] == 'e' && temp[length - 2] == 't' &&
-				temp[length - 3] == 'a' && temp[length - 4] == 'c' && temp[length - 5] == 'i'))
+	if (temp[length - 1] == 'l' && temp[length - 2] == 'u' && temp[length - 3] == 'f')
+	{
+		strcpy(step3, substring_return(step3, 3));
+		if (degree_m(step3) > 0)	
 		{
 			temp[length - 3] = '\0';
-			s = temp;
+			word = temp;
 		}
-		else if ((temp[length - 1] == 'l' && temp[length - 2] == 'u' && temp[length - 3] == 'f'))
-		{
-			strcpy(step3, temp);
-			strcpy(step3, substring_return(step3, 3));
-			if (length > 3 && degree_m(step3) > 0) {
-				temp[length - 3] = '\0';
-				s = temp;
-			}
 
+	}
+	if (temp[length - 1] == 's' && temp[length - 2] == 's' && temp[length - 3] == 'e' && temp[length - 4] == 'n')
+	{
+		strcpy(step3, substring_return(step3, 4));
+		if (degree_m(step3) > 0)	
+		{
+			temp[length - 4] = '\0';
+			word = temp;
+			
 		}
-		else if (temp[length - 1] == 's' && temp[length - 2] == 's' &&
-			temp[length - 3] == 'e' && temp[length - 4] == 'n')
-		{
-			strcpy(step3, temp);
-			strcpy(step3, substring_return(step3, 4));
 
-			if (length > 4 && degree_m(step3) > 0) {
-				temp[length - 4] = '\0';
-				s = temp;
-			}
+	}
+	if (temp[length - 1] == 'e' && temp[length - 2] == 't' &&
+		temp[length - 3] == 'a' && temp[length - 4] == 'c' && temp[length - 5] == 'i')
+	{
+		strcpy(step3, substring_return(step3, 5));
+		if (degree_m(step3) > 0) 
+		{
+			temp[length - 3] = '\0';
+			word = temp;
 		}
 	}
-	printf("\nIn step 3, final value of s is %s\n", s);
+	
+	return word;
 }
 char* step_4(char* temp) {
-	s = NULL;
+	word = NULL;
 
 	int length = strlen(temp);
 	char step4[30];
@@ -341,7 +337,7 @@ char* step_4(char* temp) {
 				temp[length - 3] == 'n' && temp[length - 4] == 'a'))
 		{
 			temp[length - 4] = '\0';
-			s = temp;
+			word = temp;
 		}
 		else if (length > 3 && temp[length - 1] == 't' && temp[length - 2] == 'n' && temp[length - 3] == 'e')
 		{
@@ -349,7 +345,7 @@ char* step_4(char* temp) {
 			strcpy(step4, substring_return(step4, 3));
 			if (degree_m(step4) > 0) {
 				temp[length - 3] = '\0';
-				s = temp;
+				word = temp;
 			}
 		}
 		else if (length > 3 && temp[length - 1] == 'e' && temp[length - 2] == 'v' && temp[length - 3] == 'i')
@@ -358,16 +354,16 @@ char* step_4(char* temp) {
 			strcpy(step4, substring_return(step4, 3));
 			if (degree_m(step4) > 0) {
 				temp[length - 3] = '\0';
-				s = temp;
+				word = temp;
 			}
 		}
 	}
-	printf("\nIn step 4, final value of s is %s\n", s);
-
+	
+	return word;
 }
 char* step_5(char* temp)
 {
-	s = NULL;
+	word = NULL;
 	int length = strlen(temp);
 	char step5[30];
 	strcpy(step5, temp);
@@ -376,7 +372,7 @@ char* step_5(char* temp)
 		if (length > 1 && degree_m(step5) > 1 && (temp[length - 1] == 'e'))
 		{
 			temp[length - 1] = '\0';
-			s = temp;
+			word = temp;
 		}
 		else if (length > 4 && end_s(temp, 's') && (temp[length - 2] == 's') &&
 			(temp[length - 3] == 'e') && (temp[length - 4] == 'n'))
@@ -385,7 +381,7 @@ char* step_5(char* temp)
 			strcpy(step5, substring_return(step5, 4));
 			if (degree_m(step5) == 1 && !cons_vowel_cons(step5)) {
 				temp[length - 4] = '\0';
-				s = temp;
+				word = temp;
 			}
 		}
 
@@ -395,18 +391,18 @@ char* step_5(char* temp)
 			strcpy(step5, substring_return(step5, 1));
 			if (degree_m(step5) > 1) {
 				temp[length - 1] = '\0';
-				s = temp;
+				word = temp;
 			}
 		}
 	}
-	printf("\nIn step 5, final value of s is %s\n", s);
-
+	
+	return word;
 }
-char* substring_return(char* st, int len) {
+char* substring_return(char* string, int length) {
 	char subs[40];
-	if (strlen(st) < len)
+	if (strlen(string) < length)
 		return NULL;
-	strcpy(subs, st);
-	subs[strlen(st) - len] = '\0';
+	strcpy(subs, string);
+	subs[strlen(string) - length] = '\0';
 	return subs;
 }
