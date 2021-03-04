@@ -1,3 +1,0 @@
-
-void addprefix(char word[]);
-
