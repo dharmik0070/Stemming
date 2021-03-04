@@ -1,4 +1,0 @@
-
-
-char *addsuffix(char word[]);
-
